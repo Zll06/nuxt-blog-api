@@ -1,9 +1,14 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const {articleModel} = require("../model/articleModel");
+const {defaultRes} = require("../utils");
+const router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get('/api/getArticleList', async function (req, res, next) {
+  const list = await articleModel.find()
+  defaultRes(list, res)
 });
+
+router.use(express.static("./public/md"))
 
 module.exports = router;
