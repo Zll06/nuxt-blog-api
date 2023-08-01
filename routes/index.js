@@ -15,9 +15,7 @@ router.get("/api/getArticle", async (req, res, next) => {
     paramsError(res)
     return
   }
-  const data = await articleModel.findOne({
-    id
-  })
+  const data = await articleModel.findById(id)
   defaultRes(data, res)
 })
 
