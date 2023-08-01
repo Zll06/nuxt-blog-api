@@ -6,7 +6,7 @@
 
 #### 二、渲染过程
 
-![nuxt-schema](C:\Users\zhangjiaqi24\Documents\ssr分享\nuxt-schema.svg)
+![nuxt-schema](/api/nuxt.js服务器端渲染分享/nuxt-schema.svg)
 
 **1、传入请求**
 
@@ -27,3 +27,49 @@
 **6、在注入数据完成后，Nuxt.js 会使用生成的 HTML 代码作为响应内容返回给浏览器**
 
 **7、切换路由时重新执行3-6步**
+
+#### 三、pages目录
+
+1、pages目录下必须有一个index.vue文件作为入口文件。
+
+2、pages目录下创建的文件会被编译为路由存在；如，
+
+```bash
+pages/
+--| user/
+-----| index.vue
+-----| one.vue
+--| index.vue
+```
+
+会被编译为
+
+```js
+router: {
+  routes: [
+    {
+      name: 'index',
+      path: '/',
+      component: 'pages/index.vue'
+    },
+    {
+      name: 'user',
+      path: '/user',
+      component: 'pages/user/index.vue'
+    },
+    {
+      name: 'user-one',
+      path: '/user/one',
+      component: 'pages/user/one.vue'
+    }
+  ]
+}
+```
+
+#### #注意事项
+
+1、加入环境变量后，打印process.env是空对象，但是可以正常访问.env.*文件中定义的变量。
+
+2、引入sass时对版本有要求，最好是sass-loader7.1.0，sass-loader1.42.1。
+
+3、定义路由文件时，目录下的文件必须是index.vue；如，定义home路由，则定义为pages/home/index.vue。
