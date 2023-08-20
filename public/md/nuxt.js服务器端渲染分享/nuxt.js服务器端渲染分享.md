@@ -114,9 +114,13 @@ layouts分为全局及自定义layout
 
 2、实例
 
-https://www.nancal.com/?columnId=1&template=home
+服务器端渲染https://www.nancal.com/?columnId=1&template=home
 
 https://www.liruan.cn/
+
+
+
+非服务器端渲染https://juejin.cn/
 
 #### #注意事项
 
