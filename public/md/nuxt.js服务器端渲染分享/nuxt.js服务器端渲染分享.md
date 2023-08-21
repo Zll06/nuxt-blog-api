@@ -4,7 +4,7 @@
 
 1、背景
 
-​		随着各大领域与行业互联网的普及，各大行业都在争取，自家品牌或产品的曝光率多一些，**SEO**已经成为前端领域必须考虑的一个问题。而**SPA**架构的普及，使得**SPA**的弊端也逐步凸显出来。就目前而言，**SPA**架构的弊端是不利于搜索引擎优化，首屏慢等问题。此时，各大框架，都在考虑自己的"服务端渲染"方案。于是，在React推出Next.js之后，Vue也推出了Nuxt.js。
+​		随着**SPA**架构的普及，使得SPA的弊端也逐步凸显出来。因为SPA架构实现的页面是通过监听router进行路由分发，结合ajax加载数据进行渲染的，但是搜索引擎爬虫识别不了js，所以就不会有一个好的排名，而且，如果打包后js文件过大时，普通客户端渲染加载所有所需文件时间较长，首页就会有一个很长的白屏等待时间。于是，各大框架，都在考虑自己的"服务端渲染"方案，在React推出Next.js之后，Vue也推出了Nuxt.js。
 
 2、服务器端渲染是什么
 
@@ -121,6 +121,140 @@ https://www.liruan.cn/
 
 
 非服务器端渲染https://juejin.cn/
+
+#### #实用知识点
+
+###### asyncData 服务端请求异步数据 (pages)
+
+asyncData 主要做服务端数据请求渲染,在它上下文能够解构出axios,route,params...参数，要解构出axios,route,params...参数，要解构出axios,route,params...参数，要解构出axios，还需要做一些额外配置，往下拉有讲到。解构出$axios，就可以做ajax请求，最后把要渲染的数据return出去就行。
+
+```javascript
+javascript复制代码export default { 
+  async asyncData({$axios,route}){ 
+    let data = await $axios('xxx/xxx/xx') 
+    return { 
+      data 
+    } 
+  } 
+}
+```
+
+###### 扩展路由（nuxt.config）
+
+在nuxt默认为约定是路由，就是在pages在创建一个文件，或者一个文件夹就会自动创建对应的路由，无需手动配置什么，方便极了，这里就不多说，这里只要说一下，当我们要对某个地址做一个特殊操作的时候，或者全面接管约定式路由的时候，就需要用扩展路由了。
+
+```css
+css复制代码router: {
+    extendRoutes(routes, resolve) {
+      routes.push({
+        name: 'custom',
+        path: '*',
+        component: resolve(__dirname, 'pages/404.vue')
+      })
+    }
+  }
+```
+
+###### 定制错误页面 （layout）
+
+默认情况下，nuxt提供了一个默认的错误页面，如果你嫌它错的哇，也可以自己定制一个风骚的错误页面，直接下`layout目录下定义一个error.vue文件`就可以定制自己喜欢的错误页面了，它会代替默认的错误页面，在`error.vue的prop有个error属于是包含错误信息的`
+
+```xml
+xml复制代码<template>
+  <div> 错误页面{{ error }} </div> 
+</template>
+<script> 
+export default { 
+  props:['error'] 
+}
+</script>
+```
+
+###### 数据请求 (nuxt.config)
+
+- 第一步 `npm i -D @nuxtjs/axois`
+- 第二步在nuxt.config引入就可以
+
+```arduino
+arduino复制代码export default{
+  modules: [
+   '@nuxtjs/axios'
+  ],
+}
+```
+
+然后重启，就可以在plugin,aysncData...的上下文解构到`$axios`参数
+
+###### 开启代理
+
+- 第一步 `npm i -D @nuxtjs/proxy`
+- 第二步 nuxt.config 下配置
+- @nuxtjs/proxy
+- nuxt.config 下配置 axios和proxy
+
+```css
+css复制代码export default {
+  axios:{
+     proxy:true
+   }，
+   proxy:{
+     'api/':{
+       target:'http://localhost:3000'
+     }
+   }
+}
+```
+
+###### axios拦截
+
+在平时开发中请求异步数据，少不了请求前，请求后做一些拦截，在nuxt中也很容易实现，只需定义一个`axios拦截plugin`。
+
+- 第一步 在`plugins目录`，起一个性感的插件名，比如叫`axios.js`
+
+```javascript
+javascript复制代码export default function ({ store, redirect, req, router, $axios }) {
+  $axios.interceptors.request.use(
+    config => {},
+    error => {}
+  )
+  $axios.interceptors.response.use(
+    response => {},
+    error => {}
+  )
+}
+```
+
+- 第二步 在`nuxt.config`中引入插件
+
+```bash
+bash复制代码export default { 
+  plugins: [ 
+    { src:'~/plugins/axios', ssr:true // 默认为true，会同时在服务端（asyncData（{$axios}））和客户端（this.$axios）同时拦截axios请求，设为false就只会拦截客户端 } 
+  ] 
+}
+```
+
+###### 定制meta（nuxt.config,pages）
+
+定制可以在nuxt.config中定义全局，也可以在pages下定制单独的。
+
+**nuxt**
+
+```css
+css复制代码export default {
+  head: {
+    title: 'test',
+    meta: [
+      { charset: 'utf-8' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+      { hid: 'description', name: 'description', content: '' }
+    ],
+    link: [
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+    ]
+  }
+}
+```
 
 #### #注意事项
 
